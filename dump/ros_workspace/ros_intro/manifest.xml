@@ -1,0 +1,17 @@
+<package>
+  <description brief="ros_intro">
+
+     ros_intro
+
+  </description>
+  <author>Harold Soh</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ros_intro</url>
+  <depend package="rospy"/>
+  <depend package="sensor_msgs"/>
+  <depend package="p2os_driver"/>
+  <depend package="tf"/>
+</package>
+
+

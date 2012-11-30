@@ -1,0 +1,114 @@
+# Hidden_map.world
+# This specifies the world that Stage will simulate. 
+
+# =================================================================
+# Set up options
+# =================================================================
+
+# set the resolution of the underlying raytrace model in meters
+resolution 0.02
+# simulation timestep in milliseconds
+interval_sim 100
+
+
+# =================================================================
+# Define the models we will be using. 
+# =================================================================
+
+# defines our laser called topurg and is of type ranger
+define topurg ranger
+(
+    sensor(
+        #specify the range of the laser
+        range [ 0.0  5.0 ]
+        #specify the field of view (fov)
+        fov 360
+        #how many samples in the fov
+        samples 720
+    )
+
+    # generic model properties
+    # color of our laser
+    color "black"
+
+    # size of the laser
+    size [ 0.050 0.050 0.100 ]
+)
+
+# defines our erratic mobile robot (of type position)
+define erratic position
+(
+    # differential drive robot
+    drive "diff"
+    
+    # size of the robot.
+    size [0.350 0.350 0.250]
+    
+    # where is midpoint of the robot? [x,y,z,heading]
+    origin [-0.050 0.000 0.000 0.000]
+    
+    # draw a "nose" on the model showing the heading
+    gui_nose 1
+
+    # with a laser
+    topurg(pose [ 0.050 0.000 0.000 0.000 ])
+)
+
+# defines our floorplan
+define floorplan model
+(
+    # sombre, sensible, artistic
+    color "black"
+
+    # most maps will need a bounding box
+    boundary 1
+    
+    # we want laser hits to register
+    ranger_return 1.000
+
+    # no gui nose or grid
+    gui_nose 0
+    gui_grid 0
+    gui_outline 0
+    gripper_return 0
+    fiducial_return 0
+    
+)
+
+# =================================================================
+# Create the models 
+# =================================================================
+
+# Create the map
+floorplan
+( 
+    #specify the map we are using, size and pose
+    name "hidden_map"
+    bitmap "hidden_map.pgm"
+    
+    #size in meters
+    size [10.000 10.000 0.500]
+    
+    # pose of the map
+    pose [ -0.512 0.603 0.000 90.000 ]
+)
+
+# Create up the robot
+erratic( 
+    name "my_robot" 
+    color "red"
+    
+    #pose of the robot [x,y,z,heading]
+    pose [ 3.200 -2.997 0.000 178.713 ] 
+)
+
+# the Stage GUI window properties
+window
+( 
+    size [ 585 539 ] 
+    rotate [ 1.000 89.940 ]
+    scale 51.032 
+)
+
+
+

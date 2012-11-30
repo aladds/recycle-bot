@@ -1,0 +1,9 @@
+<launch>
+    <!-- Start Joystick Controller -->
+    <include file="$(find ros_intro)/launch/joystick_controller.launch"/>
+    
+    <!-- Start rviz -->
+    <node pkg="rviz" type="rviz" name="rviz"/>
+
+</launch>
+

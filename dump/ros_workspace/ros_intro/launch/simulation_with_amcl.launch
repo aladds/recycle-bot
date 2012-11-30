@@ -1,0 +1,10 @@
+<launch>
+
+    <!-- Start Stage -->
+    <node pkg="stage" type="stageros" name="stage"  
+        args="$(find ros_intro)/world/hidden_map.world"/>
+    
+    <!-- Start Localisation -->
+    <include file="$(find ros_intro)/launch/localize.launch"/>
+
+</launch>
