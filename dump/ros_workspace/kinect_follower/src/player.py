@@ -7,19 +7,21 @@ roslib.load_manifest('ros_intro')
 # Load (import) rospy
 import rospy
 import pygame
-
-# Load JoyAxis from ros_intro
-from ros_intro.msg import JoyAxis
+from geometry_msgs.msg import Twist
 
 class JoystickToPlayer:
 
     def __init__(self):
-	rospy.Subscriber("joystick", JoyAxis, self.playerCallback)
+	rospy.Subscriber("cmd_vel", Twist, self.playerCallback)
 
     def playerCallback(self, data):
-	if data.button1 == True:
+	if data.linear.x != 0 and state1 == False:
 	    pygame.init()
 	    pygame.mixer.Sound('/home/human/Downloads/hello.wav').play()
+	    state1 = True
+	    
+	if data.linear.x == 0 and state1 == True:
+	    state1 = False
 
     def startListener(self):
 	rospy.spin()

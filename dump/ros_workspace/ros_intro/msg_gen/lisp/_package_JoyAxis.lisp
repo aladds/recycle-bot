@@ -3,4 +3,6 @@
           X
           Y-VAL
           Y
+          BUTTON1-VAL
+          BUTTON1
 ))

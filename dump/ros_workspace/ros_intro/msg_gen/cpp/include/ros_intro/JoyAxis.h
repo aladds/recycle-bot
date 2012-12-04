@@ -24,12 +24,14 @@ struct JoyAxis_ {
   JoyAxis_()
   : x(0.0)
   , y(0.0)
+  , button1(false)
   {
   }
 
   JoyAxis_(const ContainerAllocator& _alloc)
   : x(0.0)
   , y(0.0)
+  , button1(false)
   {
   }
 
@@ -38,6 +40,9 @@ struct JoyAxis_ {
 
   typedef float _y_type;
   float y;
+
+  typedef uint8_t _button1_type;
+  uint8_t button1;
 
 
   typedef boost::shared_ptr< ::ros_intro::JoyAxis_<ContainerAllocator> > Ptr;
@@ -68,12 +73,12 @@ template<class ContainerAllocator>
 struct MD5Sum< ::ros_intro::JoyAxis_<ContainerAllocator> > {
   static const char* value() 
   {
-    return "ff8d7d66dd3e4b731ef14a45d38888b6";
+    return "a4d0515b204fdcee5c954ba17ec1d2fa";
   }
 
   static const char* value(const  ::ros_intro::JoyAxis_<ContainerAllocator> &) { return value(); } 
-  static const uint64_t static_value1 = 0xff8d7d66dd3e4b73ULL;
-  static const uint64_t static_value2 = 0x1ef14a45d38888b6ULL;
+  static const uint64_t static_value1 = 0xa4d0515b204fdceeULL;
+  static const uint64_t static_value2 = 0x5c954ba17ec1d2faULL;
 };
 
 template<class ContainerAllocator>
@@ -92,6 +97,7 @@ struct Definition< ::ros_intro::JoyAxis_<ContainerAllocator> > {
   {
     return "float32 x\n\
 float32 y\n\
+bool button1\n\
 \n\
 ";
   }
@@ -114,6 +120,7 @@ template<class ContainerAllocator> struct Serializer< ::ros_intro::JoyAxis_<Cont
   {
     stream.next(m.x);
     stream.next(m.y);
+    stream.next(m.button1);
   }
 
   ROS_DECLARE_ALLINONE_SERIALIZER;
@@ -135,6 +142,8 @@ struct Printer< ::ros_intro::JoyAxis_<ContainerAllocator> >
     Printer<float>::stream(s, indent + "  ", v.x);
     s << indent << "y: ";
     Printer<float>::stream(s, indent + "  ", v.y);
+    s << indent << "button1: ";
+    Printer<uint8_t>::stream(s, indent + "  ", v.button1);
   }
 };
 

@@ -66,7 +66,7 @@ def startMainLoop():
         # log this information
         # ROS will also send this to stdout (print it to the screen)
         # if you are unfamiliar with 
-        rospy.loginfo("XY: [" + str(x_val) + ", " + str(y_val) + "]\n" + "Button1: [" + str(button1) + "]")
+        rospy.loginfo("XY: [" + str(x_val) + ", " + str(y_val) + "]\n" + "Button1: [" + str(button1) + "]"
         
         # sleep (wait) until it is time to run again (this maintains the 
         # rate of the program at 20Hz)

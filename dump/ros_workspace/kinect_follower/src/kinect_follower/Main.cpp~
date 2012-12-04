@@ -42,17 +42,12 @@ std::string getOriginFrame()
                                         "torso_2",
                                         "torso_3",
                                         "torso_4",
-                                        "torso_5",
-                                        "torso_6",
-                                        "torso_7",
-                                        "torso_8",
-                                        "torso_9",
-                                        "torso_10" };
+                                        "torso_5" };
         
         
         srand(time(NULL));
         torso_num++;
-        if(torso_num>9)torso_num=0;
+        if(torso_num>4)torso_num=0;
         
         
         chosen_torso = torso_list[torso_num];
@@ -82,6 +77,10 @@ int main(int argc, char* argv[])
     //Advertise cmd_vel
     ros::Publisher pub = nodeHandle.advertise<geometry_msgs::Twist>(
                 "cmd_vel", 10
+                );
+                
+    ros::Publisher pub1 = nodeHandle.advertise<msg::MoveState>(
+                "move_state", false
                 );
 
     // Maximum time for transform to be available
@@ -159,6 +158,7 @@ int main(int argc, char* argv[])
         std::cout << "Angular speed is " << angularSpeed << "," << "Linear speed is " << linearSpeed << "." << std::endl;
 
         pub.publish(msg);
+        pub1.publish(msg1);
 
         ros::spinOnce();
         nodeRate.sleep();

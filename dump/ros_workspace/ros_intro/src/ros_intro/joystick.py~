@@ -42,7 +42,7 @@ class Joystick:
         
     def getButton1(self):
         pygame.event.pump()
-        return self.joysticks[self.active_js].get_button(0)
+        return pygame.get_button(0)
     
     def isInit(self):
         return (self.joysticks[self.active_js]).get_init()
