@@ -78,10 +78,6 @@ int main(int argc, char* argv[])
     ros::Publisher pub = nodeHandle.advertise<geometry_msgs::Twist>(
                 "cmd_vel", 10
                 );
-                
-    ros::Publisher pub1 = nodeHandle.advertise<msg::MoveState>(
-                "move_state", false
-                );
 
     // Maximum time for transform to be available
     const double timeout = 0.1;
@@ -158,7 +154,6 @@ int main(int argc, char* argv[])
         std::cout << "Angular speed is " << angularSpeed << "," << "Linear speed is " << linearSpeed << "." << std::endl;
 
         pub.publish(msg);
-        pub1.publish(msg1);
 
         ros::spinOnce();
         nodeRate.sleep();
