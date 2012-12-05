@@ -11,34 +11,41 @@ def callbackscreen(message):
     if message.data == "full":
         screenplane = pygame.display.set_mode((0,0),pygame.FULLSCREEN ,0)
         displayPicture()
-        rospy.loginfo(rospy.get_name()+" Switching to fullscreen mode")
+        #rospy.loginfo(rospy.get_name()+" Switching to fullscreen mode")
     elif message.data == "close":
         os.system("xrandr -o right")
         screenplane = pygame.display.set_mode((0,0),0,0)
         displayPicture()
-        rospy.loginfo(rospy.get_name()+" Closing fullscreen mode")
+        #rospy.loginfo(rospy.get_name()+" Closing fullscreen mode")
 
 def displayPicture():
     screenplane.blit(picture, (0, 0))
     pygame.display.update()
 
-
 def callback(message):
     global picture
-    if message.bottle == 0:
-        picture = bottle_cross
-        rospy.loginfo(rospy.get_name()+" Detected not bottle")
-    elif message.bottle == 1:
-        picture = bottle_tick
-        rospy.loginfo(rospy.get_name()+" Bottle detected")
-    else:
-        picture = bottle_pic
+    if state1 == 0:
+        state1++
+        picture = can1
+    elif state1 == 1:
+        state1++
+        picture = can2
+    elif state1 == 2:
+        state1++
+        picture = can3
+    elif state1 == 3:
+        state1++
+        picture = can4
+    elif state1 == 4:
+        state1 = 0
+        picture = can5
 
     displayPicture()
 
 def screen():
     rospy.init_node('screen')
     #rospy.Subscriber("screen",String, callbackscreen)
+    rospy.Subscriber('movement_state',String, callback)
     rospy.spin()
 
 if __name__ == '__main__':
