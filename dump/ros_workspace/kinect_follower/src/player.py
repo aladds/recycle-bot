@@ -2,29 +2,26 @@
 
 # Remember the two lines for every python ROS node? 
 import roslib
-roslib.load_manifest('ros_intro')
+roslib.load_manifest('kinect_follower')
 
 # Load (import) rospy
 import rospy
 import pygame
 from geometry_msgs.msg import Twist
-from std_msgs.msg import String
 
-class Speaker:
+class SoundPlayer:
 
     def __init__(self):
-	rospy.Subscriber('cmd_vel', Twist, self.playerCallback)
-	pub = rospy.Publisher('movement_state', String)
+	rospy.Subscriber("cmd_vel", Twist, self.playerCallback)
 
     def playerCallback(self, data):
 	if data.linear.x != 0 and state1 == False:
-	    pygame.mixer.Sound('/home/human/recycle-bot/dump/ros-workspace/kinect_follower/hithere.wav').play()
+	    pygame.init()
+	    pygame.mixer.Sound('/home/human/Downloads/hello.wav').play()
 	    state1 = True
 	    
 	if data.linear.x == 0 and state1 == True:
-	    pygame.mixer.Sound('/home/human/recycle-bot/dump/ros-workspace/kinect_follower/gotacan.wav').play()
 	    state1 = False
-	    pub.publish('next')
 
     def startListener(self):
 	rospy.spin()
@@ -33,8 +30,7 @@ if __name__ == '__main__':
     try:
         # instantiate the class and start the listener
 	rospy.init_node("player")
-	    pygame.init()
-        jsconv = Speaker()
+        jsconv = SoundPlayer()
         jsconv.startListener()
     except rospy.ROSInterruptException: 
         pass
