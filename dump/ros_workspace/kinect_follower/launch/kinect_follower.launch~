@@ -19,11 +19,17 @@
         </node>
     <node pkg="kinect_follower" type="tf_broadcaster"
         name="tf_broadcaster" required="true" output="screen" />
+    
+    <node pkg="kinect_follower" type="player"
+        name="player" required="true" output="screen" />
+    
+    <node pkg="kinect_follower" type="screen"
+        name="screen" required="true" output="screen" />
         
     <!-- Start p2os driver -->
     <node pkg="p2os_driver" type="p2os" name="p2os" required="true" output="screen">
         <rosparam>
-            port  : "/dev/ttyUSB0"
+            port  : "/dev/ttyUSB1"
             pulse : 1
             use_sonar : true
         </rosparam>

@@ -43,13 +43,12 @@ def callback(message):
     displayPicture()
 
 def screen():
-    
+    rospy.init_node('screen')
     #rospy.Subscriber("screen",String, callbackscreen)
     rospy.Subscriber('movement_state',String, callback)
     rospy.spin()
 
 if __name__ == '__main__':
-    rospy.init_node('screen')
     os.system("xrandr -o normal")
     pygame.display.init()
     screenplane = pygame.display.set_mode((0,0),pygame.FULLSCREEN ,0)

@@ -28,6 +28,7 @@ class SoundPlayer:
 
 if __name__ == '__main__':
     try:
+        # instantiate the class and start the listener
 	    rospy.init_node("player")
 	    pygame.init()
         jsconv = SoundPlayer()

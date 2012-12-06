@@ -40,4 +40,10 @@
 
     <!-- Start Shared Control -->
     <node pkg="kinect_follower" type="shared_control.py" name="scontrol" required="true"/>    
+    
+    <node pkg="kinect_follower" type="player.py"
+        name="player" required="true" output="screen" />
+    
+    <node pkg="kinect_follower" type="screen.py"
+        name="screen" required="true" output="screen" />
 </launch>
