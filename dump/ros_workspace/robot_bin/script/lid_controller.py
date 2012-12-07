@@ -1,30 +1,29 @@
 #!/usr/bin/env python
 
-# Remember the two lines for every python ROS node? 
 import roslib
 roslib.load_manifest('robot_bin')
 
-# Load (import) rospy
 import rospy
-import pygame
 from geometry_msgs.msg import Twist
+import serial
 state1 = False
 
-class SoundPlayer:
+class LidController:
 	def __init__(self):
-		rospy.init_node("player")
+		rospy.init_node("lid_controller")
 		rospy.Subscriber("cmd_vel", Twist, self.playerCallback)
-		pygame.init()
+		ser = serial.serial_for_url('/dev/ttyUSB1') # open first serial/USB port, change as needed
+		print ser.portstr       # check which port was really used
 
 	def playerCallback(self, data):
 		global state1
 		
 		if data.linear.x < 0.1 and state1 == False:
-			pygame.mixer.Sound('/home/human/ros_workspace/robot_clips/Hi.wav').play()
+			ser.write("SM0.\n") #open the lid
 			state1 = True
 			
 		if data.linear.x > 0.2 and state1 == True:
-			pygame.mixer.Sound('/home/human/ros_workspace/robot_clips/HeyYou.wav').play()
+			ser.write("SM100.\n") #close the lid 
 			state1 = False
 
 	def startListener(self):
@@ -32,7 +31,7 @@ class SoundPlayer:
 
 if __name__ == '__main__':
 	try:
-		sp = SoundPlayer()
+		sp = LidController()
 		sp.startListener()
 	except rospy.ROSInterruptException:
 		pass

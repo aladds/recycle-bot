@@ -47,9 +47,9 @@
     <!--<node pkg="kinect_follower" type="display.py"
         name="display" required="true" output="screen" />-->
         
-    <node pkg="kinect_follower" type="lid_controller.py"
-        name="lid_controller" required="true" output="screen" />
+    <!--<node pkg="kinect_follower" type="lid_controller.py"
+        name="lid_controller" required="true" output="screen" />-->
         
-    <node pkg="kinect_follower" type="head_controller.py"
-        name="head_controller" required="true" output="screen" />
+    <!--<node pkg="kinect_follower" type="head_controller.py"
+        name="head_controller" required="true" output="screen" />-->
 </launch>

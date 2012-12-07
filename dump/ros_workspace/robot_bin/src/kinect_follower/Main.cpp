@@ -26,6 +26,7 @@
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/String.h>
 #include <time.h>
 #include <stdlib.h>
 
@@ -219,6 +220,8 @@ int main(int argc, char* argv[])
     //Advertise cmd_vel
     ros::Publisher pub = nodeHandle.advertise<geometry_msgs::Twist>(
                             "cmd_vel", 10);
+    ros::Publisher pub2 = nodeHandle.advertise<std_msgs::String>(
+    						"no_frames", 10)
 
     // Maximum time for transform to be available
     const double timeout = 0.1;
@@ -274,11 +277,12 @@ int main(int argc, char* argv[])
             linearSpeed = 0;
             angularSpeed = 0;
 
-            std::cout << "Found no valid tf to track, so rotate." << std::endl;
+            std::cout << "Found no valid tf to track" << std::endl;
 
             //pub.publish(msg);
+            pub2.publish("true");
 
-            //ros::spinOnce();
+            ros::spinOnce();
             //nodeRate.sleep();
         }
 
@@ -286,6 +290,9 @@ int main(int argc, char* argv[])
 
         if ( okay )
         {
+        	pub2.publish("false");
+        	ros::spinOnce();
+        	
             geometry_msgs::PointStamped input;
             input.header.frame_id = currentTorso;
             input.header.stamp = ros::Time(0);

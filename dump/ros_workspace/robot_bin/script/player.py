@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-# Remember the two lines for every python ROS node? 
 import roslib
 roslib.load_manifest('robot_bin')
 
-# Load (import) rospy
 import rospy
 import pygame
 from geometry_msgs.msg import Twist
