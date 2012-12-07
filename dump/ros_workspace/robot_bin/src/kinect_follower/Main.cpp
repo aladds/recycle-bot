@@ -1,0 +1,346 @@
+/*
+ * Copyright (c) 2012 Miguel Sarabia del Castillo
+ * Imperial College London
+ *
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ */
+
+#include <ros/ros.h>
+#include <tf/transform_listener.h>
+#include <geometry_msgs/Twist.h>
+#include <time.h>
+#include <stdlib.h>
+
+
+// README: The objective of this part is to obtain the position of the user's
+// torso with respect to the base of the robot, and then create a velocity
+// command so robot follows the user.
+
+std::string getOriginFrame()
+{
+        static int torso_num = 0;
+        std::string chosen_torso;
+        std::string torso_list[] = {    "torso_1",
+                                        "torso_2",
+                                        "torso_3",
+                                        "torso_4",
+                                        "torso_5",
+                                        "torso_6",
+                                        "torso_7",
+                                        "torso_8",
+                                        "torso_9",
+                                        "torso_10" };
+        
+        
+        torso_num++;
+        if(torso_num>4)torso_num=0;
+        
+        chosen_torso = torso_list[torso_num];
+        
+        //std::cout << "Origin Frame: " << chosen_torso << std::endl;
+        
+        return chosen_torso;
+}
+
+bool existsValidtf(tf::TransformListener &tfl, std::string destFrame, double timeout)
+{
+    for (int index = 0; index < 10; index++) {
+        std::string torso = getOriginFrame();
+        if (tfl.waitForTransform(
+            destFrame,
+            torso,
+            ros::Time::now() - ros::Duration(timeout), //Need recent tf
+            ros::Duration(timeout))) {
+                return true;
+            }
+        }
+    return false;
+}
+
+bool IsCloserTorsoExists(std::string currentTorso, double currentDistance, std::string destFrame, tf::TransformListener &tfl, double timeout) {
+    for (int i = 0; i < 10; i++) {
+        std::string comparisonTorso = getOriginFrame();
+        if (comparisonTorso != currentTorso &&
+            tfl.waitForTransform(
+            destFrame,
+            comparisonTorso,
+            ros::Time::now() - ros::Duration(timeout),
+            ros::Duration(timeout))) {
+            
+            geometry_msgs::PointStamped input;
+            input.header.frame_id = comparisonTorso;
+            input.header.stamp = ros::Time(0);
+
+            input.point.x = 0.0;
+            input.point.y = 0.0;
+            input.point.z = 0.0;
+
+            geometry_msgs::PointStamped output;
+
+            tfl.transformPoint( destFrame, input, output );
+
+            double distance = std::sqrt(
+            output.point.x * output.point.x +
+            output.point.y * output.point.y
+            );
+            std::cout << "Comparing new " << comparisonTorso << " at distance " << distance
+            << " to existing " << currentTorso << " at distance " << currentDistance << "." << std::endl;
+            if (distance < currentDistance) {
+                std::cout << "Found torso " << comparisonTorso << " is closer at distance " << distance << "." << std::endl;
+                return true;
+            }
+        }
+    }
+    std::cout << "There is no closer torso than " << currentTorso << "." << std::endl;
+    return false;
+}
+
+bool isValidClosesttf(std::string frame, tf::TransformListener &tfl, std::string destFrame, double timeout)
+{
+    bool valid = tfl.waitForTransform(
+        destFrame,
+        frame,
+        ros::Time::now() - ros::Duration(timeout),
+        ros::Duration(timeout));
+    if (!valid) {
+        std::cout << "Torso " << frame << " is not valid anymore." << std::endl;
+        return valid;
+    }
+    else {
+        geometry_msgs::PointStamped input;
+        input.header.frame_id = frame;
+        input.header.stamp = ros::Time(0);
+
+        input.point.x = 0.0;
+        input.point.y = 0.0;
+        input.point.z = 0.0;
+
+        geometry_msgs::PointStamped output;
+
+        tfl.transformPoint( destFrame, input, output );
+
+        double frameDistance = std::sqrt(
+        output.point.x * output.point.x +
+        output.point.y * output.point.y
+        );
+
+        return !IsCloserTorsoExists(frame, frameDistance, destFrame, tfl, timeout);
+    }
+}
+
+std::string findValidtf(tf::TransformListener &tfl, std::string destFrame,
+double timeout)
+{
+    std::string foundTorso = "";
+    double foundDistance = 10000000;
+
+    for (int i = 0; i < 5; i++) {
+        std::string torso = getOriginFrame();
+
+        if (tfl.waitForTransform(
+            destFrame,
+            torso,
+            ros::Time::now() - ros::Duration(timeout), //Need recent tf
+            ros::Duration(timeout)
+            )) {
+
+            geometry_msgs::PointStamped input;
+            input.header.frame_id = torso;
+            input.header.stamp = ros::Time(0);
+
+            input.point.x = 0.0;
+            input.point.y = 0.0;
+            input.point.z = 0.0;
+
+            geometry_msgs::PointStamped output;
+
+            tfl.transformPoint( destFrame, input, output );
+
+            double distance = std::sqrt(
+            output.point.x * output.point.x +
+            output.point.y * output.point.y
+            );
+
+            if (distance < foundDistance) {
+            foundTorso = torso;
+            foundDistance = distance;
+            }
+        }
+    }
+    std::cout << "Tracking torso " << foundTorso << " at distance " << foundDistance << "." << std::endl;
+    return foundTorso;
+} 
+
+/*void loseAllTorsos() {
+    std::string torso_list[] = {    "torso_1",
+                                        "torso_2",
+                                        "torso_3",
+                                        "torso_4",
+                                        "torso_5" };
+
+    ros::spinOnce();
+
+    std::cout << "Forcing loss of all torsos." << std::endl;
+}*/
+
+int main(int argc, char* argv[])
+{
+    // WARNING: Safety-critical constants, please do not modify.
+    const double frequency = 20;
+    const double timeToUser = 6; //Time for robot to reach to user's position
+    const double minDistance = 0.4; //30 cm
+    const double minAngle = 0.09; //~5deg
+    const double maxLinearSpeed = 0.3;// in metres per second
+    const double maxAngularSpeed = 0.5; //~30 deg per second
+
+    // Initialise ROS
+    ros::init(argc, argv, "kinect_follower");
+    ros::NodeHandle nodeHandle;
+    ros::Rate nodeRate(frequency); //Node runs at 20Hz
+
+    //Advertise cmd_vel
+    ros::Publisher pub = nodeHandle.advertise<geometry_msgs::Twist>(
+                            "cmd_vel", 10);
+
+    // Maximum time for transform to be available
+    const double timeout = 0.1;
+    //const std::string originFrame = "torso_1";
+    const std::string destFrame = "base_link";
+
+
+    tf::TransformListener tfl;
+    
+    std::string currentTorso = "torso_1";
+
+    while( ros::ok() )
+    {
+        double linearSpeed = 0.0;
+        double angularSpeed = 0.0;
+
+        bool okay = false;
+        
+        if (isValidClosesttf(currentTorso, tfl, destFrame, timeout)) {
+            std::cout << "Continuing to track " << currentTorso << "." << std::endl;
+            okay = true;
+        }
+        // Check if transform exists
+        else if (existsValidtf(tfl, destFrame, timeout)) {
+            std::string lostTorso = currentTorso;
+            currentTorso = findValidtf(tfl, destFrame, timeout);
+            if (currentTorso.compare("") != 0) {
+                okay = true;
+                std::cout << "Tracking new torso " << currentTorso << "." << std::endl;
+            }
+            else {
+                geometry_msgs::Twist msg;
+
+                //msg.linear.x = 0;
+                //msg.angular.z = 0;
+                linearSpeed = 0;
+            	angularSpeed = 0;
+
+                std::cout << "Tf became invalid, so don't move." << std::endl;
+
+                //pub.publish(msg);
+
+                //ros::spinOnce();
+                //nodeRate.sleep();
+            }
+        }
+        else {
+            //loseAllTorsos();
+            //geometry_msgs::Twist msg;
+
+            //msg.linear.x = 0;
+            //msg.angular.z = 0;
+            linearSpeed = 0;
+            angularSpeed = 0;
+
+            std::cout << "Found no valid tf to track, so rotate." << std::endl;
+
+            //pub.publish(msg);
+
+            //ros::spinOnce();
+            //nodeRate.sleep();
+        }
+
+        //ros::spinOnce();
+
+        if ( okay )
+        {
+            geometry_msgs::PointStamped input;
+            input.header.frame_id = currentTorso;
+            input.header.stamp = ros::Time(0);
+
+            input.point.x = 0.0;
+            input.point.y = 0.0;
+            input.point.z = 0.0;
+
+            geometry_msgs::PointStamped output;
+
+            tfl.transformPoint( destFrame, input, output );
+
+
+            double distance = std::sqrt(
+                        output.point.x * output.point.x +
+                        output.point.y * output.point.y
+                        );
+
+            double angle = std::atan2(output.point.y, output.point.x);
+
+
+            if ( std::abs(angle) > minAngle )
+            {
+                angularSpeed = std::abs( angle*frequency / timeToUser );
+
+                if (angularSpeed > maxAngularSpeed)
+                    angularSpeed = maxAngularSpeed;
+
+
+                if ( angle < 0 )
+                    angularSpeed = -angularSpeed;
+
+            }
+            if ( distance > minDistance )
+            {
+                linearSpeed =  distance * frequency /timeToUser ;
+
+                if (linearSpeed > maxLinearSpeed)
+                    linearSpeed = maxLinearSpeed;
+
+            }
+        }
+
+        geometry_msgs::Twist msg;
+
+        msg.linear.x = linearSpeed;
+        msg.angular.z = angularSpeed;
+
+        std::cout << "Angular speed is " << angularSpeed << "," << "Linear speed is " << linearSpeed << "." << std::endl;
+
+        pub.publish(msg);
+
+        ros::spinOnce();
+        nodeRate.sleep();
+    }
+
+    return 0;
+}
