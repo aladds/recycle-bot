@@ -26,5 +26,5 @@ file(GLOB FOLLOWER_SOURCES
 
 #Build everything
 rosbuild_add_executable("tf_broadcaster" ${TF_SOURCES} )
-rosbuild_add_executable(${PROJECT_NAME} ${FOLLOWER_SOURCES})
+rosbuild_add_executable("kinect_follower" ${FOLLOWER_SOURCES})
 

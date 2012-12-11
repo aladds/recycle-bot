@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import roslib; roslib.load_manifest('kinect_follower')
+import roslib; roslib.load_manifest('robot_bin')
 import rospy
 import pygame.display
 import pygame.image
@@ -45,19 +45,48 @@ def callback(message):
 def screen():
     
     #rospy.Subscriber("screen",String, callbackscreen)
-    rospy.Subscriber('movement_state',String, callback)
-    rospy.spin()
+    #rospy.Subscriber('movement_state',String, callback)
+    #rospy.spin()
+ 	r = rospy.Rate(0.03)
+ 	state1 = 0
+ 	
+ 	while not rospy.is_shutdown():
+		global picture
+		if state1 == 0:
+		    state1 = state1 + 1
+		    picture = bottle_pic
+		elif state1 == 1:
+		    state1 = state1 + 1
+		    picture = bottle_pic2
+		elif state1 == 2:
+		    state1 = state1 + 1
+		    picture = bottle_pic3
+		elif state1 == 3:
+		    state1 = state1 + 1
+		    picture = bottle_pic4
+		elif state1 == 4:
+		    state1 = 0
+		    picture = bottle_pic5
+		displayPicture()
+    	r.sleep()
 
 if __name__ == '__main__':
     rospy.init_node('display')
     os.system("xrandr -o normal")
     pygame.display.init()
     screenplane = pygame.display.set_mode((0,0),pygame.RESIZABLE ,0)
-    pckpath = roslib.packages.get_pkg_dir("kinect_follower")
+    pckpath = roslib.packages.get_pkg_dir("robot_bin")
+    
     bottle_pic = pygame.image.load(pckpath+"/bottle.jpg")
+    bottle_pic2 = pygame.image.load(pckpath+"/bottle2.jpg")
+    bottle_pic3 = pygame.image.load(pckpath+"/bottle3.jpg")
+    bottle_pic4 = pygame.image.load(pckpath+"/bottle4.jpg")
+    bottle_pic5 = pygame.image.load(pckpath+"/bottle5.jpg")
     #bottle_pic = pygame.transform.rotate(bottle_pic, -90)
     picture = bottle_pic
     displayPicture()
-    try:
-        screen()
-    except rospy.ROSInterruptException: pass
+    screen()
+    #try:
+        #screen()
+    #except rospy.ROSInterruptException: pass
+    
