@@ -1,5 +1,5 @@
 <package>
-  <description brief="robot_bin">
+  <description brief="kinect_follower">
 
      Activity for the Imperial College Robotics Summer School 2012.
      P3-AT follows user using data from streamed from Kinect.

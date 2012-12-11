@@ -32,14 +32,20 @@
     <!-- Start p2os dashboard -->
     <node pkg="p2os_dashboard" type="p2os_dashboard" name="p2os_dashboard"
         required="true" output="screen" />
+        
+    <!-- Start joystick control -->
+    <!--<node pkg="robot_bin" type="joystick_node.py" name="joystick_node"
+        required="true" output="screen" />
+        
+    <node pkg="robot_bin" type="joystick_to_cmd_vel.py" name="joystick_to_cmd_vel"
+        required="true" output="screen" />-->
 
     <!-- Start Sonar to Pointcloud converter -->
-    <node pkg="ros_intro" type="sonar_to_pointcloud.py" name="sonar_to_pc" 
-        required="true" output="screen"/>
-        
+    <!--<node pkg="ros_intro" type="sonar_to_pointcloud.py" name="sonar_to_pc" 
+        required="true" output="screen"/>-->
 
     <!-- Start Shared Control -->
-    <node pkg="robot_bin" type="shared_control.py" name="scontrol" required="true"/>    
+    <node pkg="robot_bin" type="shared_control.py" name="scontrol" required="true"/>
     
     <node pkg="robot_bin" type="player.py"
         name="player" required="true" output="screen" />
@@ -47,9 +53,9 @@
     <!--<node pkg="kinect_follower" type="display.py"
         name="display" required="true" output="screen" />-->
         
-    <node pkg="kinect_follower" type="lid_controller.py"
+    <!--<node pkg="kinect_follower" type="lid_controller.py"
         name="lid_controller" required="true" output="screen" />
         
     <node pkg="kinect_follower" type="head_controller.py"
-        name="head_controller" required="true" output="screen" />
+        name="head_controller" required="true" output="screen" />-->
 </launch>

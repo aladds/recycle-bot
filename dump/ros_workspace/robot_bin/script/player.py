@@ -17,11 +17,11 @@ class SoundPlayer:
 	def playerCallback(self, data):
 		global state1
 		
-		if data.linear.x < 0.1 and state1 == False:
+		if data.angular.z < 0.05 and state1 == False:
 			pygame.mixer.Sound('/home/human/ros_workspace/robot_clips/Hi.wav').play()
 			state1 = True
 			
-		if data.linear.x > 0.2 and state1 == True:
+		if data.angular.z > 0.2 and state1 == True:
 			pygame.mixer.Sound('/home/human/ros_workspace/robot_clips/HeyYou.wav').play()
 			state1 = False
 
