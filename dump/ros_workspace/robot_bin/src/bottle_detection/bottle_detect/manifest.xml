@@ -1,0 +1,14 @@
+<package>
+  <description brief="bottle_detect">
+
+     bottle_detect
+
+  </description>
+  <author>Human</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/bottle_detect</url>
+
+</package>
+
+
